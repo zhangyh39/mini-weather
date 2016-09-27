@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-v4\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-24.2.1_66044bf51b08311134df18143a12e266434ffc63\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="43b2dba6b5a0b14527961b75329d0b90025f15ea">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-24.2.1_e015dcf6317da2c3e5d9369d78d53785ec010d60\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="e7f3132168957eefc46229fc32c3bd464642b71e">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-ui-24.2.1_f69458cf9b8c9b06ab0a832c03f41dd29ed91d29\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="94bc1dfb84dcc8b6f6f8f7cc726d7b2dd39c1574">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-24.2.1_764a0128f51a5fd374545d2e4f8cc1af95b2feba\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-fragment\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="5f64d657e838e8375135c0f6057a7ff8fab6a50e">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_b5cb6182a8dc66c4498847a14d0e56940f0c9e4a\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\24.2.1\support-annotations-24.2.1.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="8de3aafecbdf98a61db6427f008f2d515bcd2544">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-24.2.1_a45405e82f9eb237681c9cf66b4eb54d7b88c9f6\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="57793d992940ad26bcd94772e229698f6d3b3a6e">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_a007ba2f61187a93a2907e2587857d833774ff28\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="d5c731fc64c03dfe04d51134955b483551c35849">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-24.2.1_4ea0a26b415946291c372534ec5d7dcf77b2c5d6\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="fbf8da429efd5ad21e02e3e5ecaa1efc4167878d">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_8f81ede20ae8de59761f188516c7dbf7106fda84\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="0ecb4b595fa0f0f8018a149ace3ea6525624f94e">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-compat-24.2.1_9759f5ed50e26cb1f302961d47d016c521d253c0\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="ab3d4118d52f5bf6463f883eacb274deafc8b975">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_ecd0de5b81d9ffd111bed764b67cc41bc46b6997\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="935a969265b2a166b2d20415423f5f6e90fe16e0">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_f6dd125e4227a1f588143ab3951b13deacf743b6\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="867dad63c33388ff8c7644b236579355036d075f">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_f8e68c7b9d8ecd758a2188fe611673c2ce5af675\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="7e4389bd133359a2ff88623ff1e4ff93d6e6f780">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_a1f12bc41263d899681ce1e08d8e16747b25cbd6\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-fragment\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="b9a1ac78ad7ef3abedc4a4b30cd92bcacb939d1f">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-fragment-24.2.1_465e1bca26b2f41f348d3eeda535e6a950f86d49\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="9c4c3bc902450c39ed54de170db4fb12aea20a35">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-utils-24.2.1_e6453b1c342a99d6342ab2720a43cb669ec8658b\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="24.0.2"
+        sha1="09b462bbcb77650284bd6614f1a32f360ef369f8">
+        <dex dex="D:\Android\AndroidStudioProjects\MiniWeather\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-media-compat-24.2.1_7f838820a0086f0a207df0c90dfd72d50f5a57ac\classes.dex" />
+    </item>
+
+</items>
