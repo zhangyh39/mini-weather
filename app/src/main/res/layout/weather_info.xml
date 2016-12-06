@@ -13,7 +13,7 @@
             android:id="@+id/title_city_manager"
             android:layout_width="45.0dp"
             android:layout_height="45.0dp"
-            android:src="@drawable/base_action_bar_action_city"/>
+            android:src="@drawable/title_city"/>
 
         <ImageView
             android:id="@+id/city_seperator"
@@ -43,19 +43,28 @@
             android:src="@drawable/title_update"
             android:visibility="visible" />
 
+        <ProgressBar
+            android:id="@+id/title_update_progress"
+            style="@style/title_update_progressbar_style"
+            android:layout_width="45dip"
+            android:layout_height="45dip"
+            android:layout_alignParentRight="true"
+            android:visibility="gone" />
+
+
         <ImageView
             android:id="@+id/title_share"
             android:layout_width="45.0dip"
             android:layout_height="45.0dip"
             android:layout_toLeftOf="@id/title_update_btn"
-            android:src="@drawable/title_share" />
+            android:src="@drawable/title_share"/>
 
         <ImageView
             android:id="@+id/title_location"
             android:layout_width="45.0dip"
             android:layout_height="45.0dip"
             android:layout_toLeftOf="@id/title_share"
-            android:src="@drawable/base_action_bar_action_city" />
+            android:src="@drawable/base_action_bar_action_city"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -244,6 +253,11 @@
         </RelativeLayout>
         </RelativeLayout>
         <!-- 六日天气信息 -->
+
+            <include
+                android:id="@+id/in"
+                layout="@layout/weather_week"/>
+
         <!-- 广告等信息 -->
     </LinearLayout>
 

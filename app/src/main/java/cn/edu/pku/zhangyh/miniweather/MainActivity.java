@@ -2,13 +2,19 @@ package cn.edu.pku.zhangyh.miniweather;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +30,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.edu.pku.zhangyh.bean.TodayWeather;
 import cn.edu.pku.zhangyh.util.NetUtil;
@@ -31,9 +39,18 @@ import cn.edu.pku.zhangyh.util.NetUtil;
 /**
  * Created by zhangyh on 2016/9/26.
  */
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener, ViewPager.OnPageChangeListener {
+
+    //六日天气
+    private ViewPagerAdapter viewPagerAdapter;
+    private ViewPager viewPager;
+    private List<View> views;
+    private ImageView[] dots;
+    private int[] ids = {R.id.iv1, R.id.iv2};
+
     private static final int UPDATE_TODAY_WEATHER=1;
     private ImageView mUpdateBtn;
+    private ImageView mCitySelect;
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv, pmQualityTv, temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
     private Handler mHandler = new Handler(){
@@ -61,9 +78,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Log.d("myWeather", "网络挂了");
             Toast.makeText(MainActivity.this, "网络挂了", Toast.LENGTH_LONG).show();
         }
+        mCitySelect=(ImageView) findViewById(R.id.title_city_manager);
+        mCitySelect.setOnClickListener(this);
         initView();
+
+
+        //六日天气
+        initViews();
+        initdots();
     }
 
+//   初始化项目，调用最后一次的数据信息
     void initView() {
         city_name_Tv = (TextView) findViewById(R.id.title_city_name);
         cityTv = (TextView) findViewById(R.id.city);
@@ -78,6 +103,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
         windTv = (TextView) findViewById(R.id.wind);
         weatherImg = (ImageView) findViewById(R.id.weather_img);
 
+/*      利用SharedPreferences读取历史数据
+        SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+        String cityCode = sharedPreferences.getString("main_city-code", "101010100");
+
+        city_name_Tv.setText(sharedPreferences.getString("cityTv", "N/A"));
+        cityTv.setText(sharedPreferences.getString("cityTv", "N/A"));
+        timeTv.setText(sharedPreferences.getString("timeTv", "N/A"));
+        humidityTv.setText(sharedPreferences.getString("humidityTv", "N/A"));
+        pmDataTv.setText(sharedPreferences.getString("pmDataTv", "N/A"));
+        climateTv.setText(sharedPreferences.getString("climateTv", "N/A"));
+        windTv.setText(sharedPreferences.getString("windTv", "N/A"));
+        pmImg.setImageResource(R.drawable.biz_plugin_weather_0_50);
+        weatherImg.setImageResource(R.drawable.biz_plugin_weather_qing);
+        */
         city_name_Tv.setText("N/A");
         cityTv.setText("N/A");
         timeTv.setText("N/A");
@@ -88,15 +127,45 @@ public class MainActivity extends Activity implements View.OnClickListener {
         temperatureTv.setText("N/A");
         climateTv.setText("N/A");
         windTv.setText("N/A");
-        pmImg.setImageResource(R.drawable.biz_plugin_weather_0_50);
-        weatherImg.setImageResource(R.drawable.biz_plugin_weather_qing);
-
     }
 
+   //存储数据
+   /* private void postData(String cityCode){
+        SharedPreferences.Editor editor=getSharedPreferences("config",MODE_PRIVATE).edit();
+        editor.putString("main_city-code", cityCode);
+        editor.putString("city_name_Tv",city_name_Tv.getText().toString());
+        editor.putString("cityTv",cityTv.getText().toString());
+        editor.putString("timeTv",timeTv.getText().toString());
+        editor.putString("humidityTv",humidityTv.getText().toString());
+        editor.putString("pmDataTv",pmDataTv.getText().toString());
+        editor.putString("climateTv",climateTv.getText().toString());
+        editor.putString("windTv",windTv.getText().toString());
+        editor.commit();
+    }*/
     @Override
     public void onClick(View view) {
+        if(view.getId()==R.id.title_city_manager){
+            Intent i=new Intent(this,SelectCity.class);
+            //startActivity(i);
+            startActivityForResult(i,1);
+        }
         if (view.getId() == R.id.title_update_btn) {
-            SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+            mUpdateBtn.setVisibility(View.GONE);
+            ProgressBar mUpateProgress =(ProgressBar) findViewById(R.id.title_update_progress);
+            mUpateProgress.setVisibility(View.VISIBLE);
+
+       /*     ImageView mShare = (ImageView)findViewById(R.id.title_share);
+            RelativeLayout.LayoutParams params =new RelativeLayout.LayoutParams(45,45);
+            params.addRule(RelativeLayout.LEFT_OF,mUpateProgress.getId());
+            mShare.setLayoutParams(params);*/
+
+            //动态调整控件位置
+            ImageView mShare = (ImageView)findViewById(R.id.title_share);
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mShare.getLayoutParams();
+            params.addRule(RelativeLayout.LEFT_OF,mUpateProgress.getId());
+            mShare.setLayoutParams(params);
+
+            SharedPreferences sharedPreferences = getSharedPreferences("config2", MODE_PRIVATE);
             String cityCode = sharedPreferences.getString("main_city-code", "101010100");
             Log.d("myWeather", cityCode);
 
@@ -110,7 +179,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        if(requestCode==1 && resultCode==RESULT_OK){
+            String newCityCode = data.getStringExtra("cityCode");
+            Log.d("myWeather","选择的城市代码为"+newCityCode);
+
+            if(NetUtil.getNetworkState(this)!=NetUtil.NETWORN_NONE){
+                Log.d("myWeather","网络ok");
+                queryWeatherCode(newCityCode);
+            }else{
+                Log.d("myWeather","网络挂了");
+                Toast.makeText(MainActivity.this, "网络挂了", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
     private void queryWeatherCode(String cityCode) {
+      //  postData(cityCode);
         final String address = "http://wthrcdn.etouch.cn/WeatherApi?citykey=" + cityCode;
         Log.d("myWeather", address);
         new Thread(new Runnable() {
@@ -208,11 +293,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 dateCount++;
                             } else if (xmlPullParser.getName().equals("high") && highCount == 0) {
                                 eventType = xmlPullParser.next();
-                                todayWeather.setHigh(xmlPullParser.getText().substring(2));
+                                todayWeather.setHigh(xmlPullParser.getText().substring(2).trim());
                                 highCount++;
                             } else if (xmlPullParser.getName().equals("low") && lowCount == 0) {
                                 eventType = xmlPullParser.next();
-                                todayWeather.setLow(xmlPullParser.getText().substring(2));
+                                todayWeather.setLow(xmlPullParser.getText().substring(2).trim());
                                 lowCount++;
                             } else if (xmlPullParser.getName().equals("type") && typeCount == 0) {
                                 eventType = xmlPullParser.next();
@@ -242,11 +327,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         pmDataTv.setText(todayWeather.getPm25());
         pmQualityTv.setText(todayWeather.getQuality());
         weekTv.setText(todayWeather.getDate());
-        temperatureTv.setText(todayWeather.getHigh()+"-"+todayWeather.getLow());
+        temperatureTv.setText(todayWeather.getHigh()+"~"+todayWeather.getLow());
         climateTv.setText(todayWeather.getType());
         windTv.setText("风力:"+todayWeather.getFengli());
 
-        if(Integer.parseInt(todayWeather.getPm25())<=50){
+        if(todayWeather.getPm25()==null){
+            pmImg.setImageResource(R.drawable.biz_plugin_weather_0_50);  //当没有pm2.5数据，没有该语句会导致闪退，待修改
+        }else if(Integer.parseInt(todayWeather.getPm25())<=50){
             pmImg.setImageResource(R.drawable.biz_plugin_weather_0_50);
         }else if(Integer.parseInt(todayWeather.getPm25())<=100){
             pmImg.setImageResource(R.drawable.biz_plugin_weather_51_100);
@@ -260,7 +347,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
             pmImg.setImageResource(R.drawable.biz_plugin_weather_greater_300);
         }
 
-        if(todayWeather.getType().equals("暴雪")){
+        if(todayWeather.getType()==null){
+            weatherImg.setImageResource(R.drawable.biz_plugin_weather_baoxue);
+        }else if(todayWeather.getType().equals("暴雪")){
             weatherImg.setImageResource(R.drawable.biz_plugin_weather_baoxue);
         }else if(todayWeather.getType().equals("暴雨")){
             weatherImg.setImageResource(R.drawable.biz_plugin_weather_baoyu);
@@ -302,7 +391,53 @@ public class MainActivity extends Activity implements View.OnClickListener {
             weatherImg.setImageResource(R.drawable.biz_plugin_weather_zhongyu);
         }
         Toast.makeText(MainActivity.this,"更新成功！",Toast.LENGTH_SHORT).show();
+
+        ProgressBar mUpateProgress =(ProgressBar) findViewById(R.id.title_update_progress);
+        mUpateProgress.setVisibility(View.GONE);
+        mUpdateBtn.setVisibility(View.VISIBLE);
+
+        //动态调整控件位置
+        ImageView mShare = (ImageView)findViewById(R.id.title_share);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mShare.getLayoutParams();
+        params.addRule(RelativeLayout.LEFT_OF, mUpdateBtn.getId());
+        mShare.setLayoutParams(params);
     }
 
+
+    //六日天气
+    private void initdots(){
+        dots = new ImageView[views.size()];
+        for(int i=0;i<views.size();i++){
+            dots[i] = (ImageView) findViewById(ids[i]);
+        }
+    }
+    private void initViews(){
+        LayoutInflater inflater = LayoutInflater.from(this);
+        views = new ArrayList<View>();
+        views.add(inflater.inflate(R.layout.week1, null));
+        views.add(inflater.inflate(R.layout.week2, null));
+        viewPagerAdapter = new ViewPagerAdapter(views,this);
+        viewPager = (ViewPager)findViewById(R.id.viewpager1);
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOnPageChangeListener(this);
+    }
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+    @Override
+    public void onPageSelected(int position) {
+        for(int a=0;a<ids.length;a++){
+            if(a==position){
+                dots[a].setImageResource(R.drawable.page_indicator_focused);
+            }else{
+                dots[a].setImageResource(R.drawable.page_indicator_unfocused);
+            }
+        }
+    }
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 
 }
