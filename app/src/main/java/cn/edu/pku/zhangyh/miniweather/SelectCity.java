@@ -35,6 +35,8 @@ public class SelectCity extends Activity implements View.OnClickListener {
     private MyApplication cityApplication;
     private List<City> mcity;
     private ArrayList<String> cityName = new ArrayList<String>();
+    private ArrayList<String> newlist = new ArrayList<String>();
+    private ArrayList<String> cityName1 = new ArrayList<String>();
     private ArrayList<String> cityId= new ArrayList<String>();
     private String selectId;
     private String selectCity;
@@ -57,18 +59,20 @@ public class SelectCity extends Activity implements View.OnClickListener {
         cityApplication = (MyApplication) getApplication();
         mcity = cityApplication.getCityList();
         for (int i = 0; i < mcity.size(); i++) {
-            cityName.add(mcity.get(i).getCity());
+            cityName.add(mcity.get(i).getProvince()+"-"+mcity.get(i).getCity());
             cityId.add(mcity.get(i).getNumber());
+            cityName1 = cityName;
         }
 
         mtitileName = (TextView) findViewById(R.id.title_name);
 
         mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                selectCity = cityName.get(i);
+                selectCity = cityName1.get(i);
                 Toast.makeText(SelectCity.this, "你选择了："+selectCity, Toast.LENGTH_SHORT).show();
                 mtitileName.setText("当前城市："+selectCity);
-                selectId = cityId.get(i);
+                int j = cityName.indexOf(selectCity);
+                selectId = cityId.get(j);
             }
         });
 
@@ -90,19 +94,31 @@ public class SelectCity extends Activity implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mEditText.setText(s);
-                Log.d("myWeather","onTextChanged:"+s);
+                newlist.clear();
+                if(mEditText.getText()!=null){
+                    String st = mEditText.getText().toString();
+                    newlist = getNewData(st);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(SelectCity.this, android.R.layout.simple_list_item_1, newlist);
+                    mlistView.setAdapter(adapter);
+                    cityName1 = newlist;
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                editStart = mEditText.getSelectionStart();
-                editEnd = mEditText.getSelectionEnd();
-                if(temp.length()>10){
 
+            }
+
+            private ArrayList<String> getNewData(String s) {
+                //遍历list
+                for (int i = 0; i < cityName.size(); i++) {
+                    //如果遍历到的名字包含所输入字符串
+                    if (cityName.get(i).contains(s)) {
+                        //将遍历到的元素重新组成一个list
+                        newlist.add(cityName.get(i));
+                    }
                 }
-                Log.d("myWeather","afterTextChanged:");
-
+                return newlist;
             }
         };
 
