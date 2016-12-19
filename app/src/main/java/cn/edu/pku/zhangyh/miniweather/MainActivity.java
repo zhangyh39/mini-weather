@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.pku.zhangyh.bean.TodayWeather;
+import cn.edu.pku.zhangyh.bean.WeekWeather;
 import cn.edu.pku.zhangyh.util.NetUtil;
 
 /**
@@ -47,8 +48,16 @@ public class MainActivity extends Activity implements View.OnClickListener, View
     private List<View> views;
     private ImageView[] dots;
     private int[] ids = {R.id.iv1, R.id.iv2};
+    private int[] dateId = {R.id.date1, R.id.date2, R.id.date3, R.id.date4, R.id.date5, R.id.date6};
+    private int[] temperatureId = {R.id.temperature1, R.id.temperature2, R.id.temperature3, R.id.temperature4, R.id.temperature5, R.id.temperature6};
+    private int[] climateId = {R.id.climate1, R.id.climate2, R.id.climate3, R.id.climate4, R.id.climate5, R.id.climate6};
+    private int[] windId = {R.id.wind1, R.id.wind2, R.id.wind3, R.id.wind4, R.id.wind5, R.id.wind6};
+    private int[] weatherImgId = {R.id.image1, R.id.image2, R.id.image3, R.id.image4, R.id.image5, R.id.image6};
+    private TextView[] dateWeek,temperatureWeek, climateWeek, windWeek;
+    private ImageView[] weatherImgWeek;
 
     private static final int UPDATE_TODAY_WEATHER=1;
+    private static final int UPDATE_WEEK_WEATHER=2;
     private ImageView mUpdateBtn;
     private ImageView mCitySelect;
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv, pmQualityTv, temperatureTv, climateTv, windTv, city_name_Tv;
@@ -58,6 +67,9 @@ public class MainActivity extends Activity implements View.OnClickListener, View
             switch (msg.what) {
                 case UPDATE_TODAY_WEATHER:
                     updateTodayWeather((TodayWeather) msg.obj);
+                    break;
+                case UPDATE_WEEK_WEATHER:
+                    updateWeekWeather((List<WeekWeather>) msg.obj);
                     break;
                 default:
                     break;
@@ -127,6 +139,8 @@ public class MainActivity extends Activity implements View.OnClickListener, View
         temperatureTv.setText("N/A");
         climateTv.setText("N/A");
         windTv.setText("N/A");
+
+
     }
 
    //存储数据
@@ -203,6 +217,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
             public void run() {
                 HttpURLConnection con = null;
                 TodayWeather todayWeather=null;
+                List<WeekWeather> weekWeathers=null;
                 try {
                     URL url = new URL(address);
                     con = (HttpURLConnection) url.openConnection();
@@ -227,6 +242,20 @@ public class MainActivity extends Activity implements View.OnClickListener, View
                         msg.obj = todayWeather;
                         mHandler.sendMessage(msg);
                     }
+                    //六日天气
+                    weekWeathers = parseXML1(responseStr);
+                    if (weekWeathers != null) {
+                        Log.d("myWeather", weekWeathers.get(0).toString());
+                        Log.d("myWeather", weekWeathers.get(1).toString());
+                        Log.d("myWeather", weekWeathers.get(2).toString());
+                        Log.d("myWeather", weekWeathers.get(3).toString());
+                        Log.d("myWeather", weekWeathers.get(4).toString());
+                        Message msg = new Message();
+                        msg.what = UPDATE_WEEK_WEATHER;
+                        msg.obj = weekWeathers;
+                        mHandler.sendMessage(msg);
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -420,6 +449,22 @@ public class MainActivity extends Activity implements View.OnClickListener, View
         viewPager = (ViewPager)findViewById(R.id.viewpager1);
         viewPager.setAdapter(viewPagerAdapter);
         viewPager.setOnPageChangeListener(this);
+
+        //六日天气
+        dateWeek = new TextView[6];
+        temperatureWeek = new TextView[6];
+        climateWeek = new TextView[6];
+        windWeek = new TextView[6];
+        weatherImgWeek = new ImageView[6];
+
+        for(int i =0;i<6;i++){
+            dateWeek[i] = (TextView) views.get(i/3).findViewById(dateId[i]);
+            temperatureWeek[i] = (TextView) views.get(i/3).findViewById(temperatureId[i]);
+            climateWeek[i] = (TextView) views.get(i/3).findViewById(climateId[i]);
+            windWeek[i] = (TextView) views.get(i/3).findViewById(windId[i]);
+            weatherImgWeek[i] = (ImageView) views.get(i/3).findViewById(weatherImgId[i]);
+        }
+
     }
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -438,6 +483,110 @@ public class MainActivity extends Activity implements View.OnClickListener, View
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    private List<WeekWeather> parseXML1(String xmldata){
+        List<WeekWeather> weekWeathers = new ArrayList<WeekWeather>();
+        WeekWeather weekWeather = null;
+        try{
+            XmlPullParserFactory fac =XmlPullParserFactory.newInstance();
+            XmlPullParser xmlPullParser = fac.newPullParser();
+            xmlPullParser.setInput(new StringReader(xmldata));
+            int eventType =xmlPullParser.getEventType();
+            while(eventType!=XmlPullParser.END_DOCUMENT){
+                switch (eventType){
+                    case XmlPullParser.START_DOCUMENT:
+                        break;
+                    case XmlPullParser.START_TAG:
+                        if(xmlPullParser.getName().equals("weather")){
+                            weekWeather = new WeekWeather();
+                            weekWeathers.add(weekWeather);
+                            Log.d("myWeather","ddd");
+                        }
+                        if(weekWeather!=null) {
+                            if (xmlPullParser.getName().equals("fengli")) {
+                                eventType = xmlPullParser.next();
+                                weekWeather.setFengli( xmlPullParser.getText());
+                                Log.d("myWeather","ffff");
+                            } else if (xmlPullParser.getName().equals("date")) {
+                                eventType = xmlPullParser.next();
+                                weekWeather.setDate(xmlPullParser.getText());
+                            } else if (xmlPullParser.getName().equals("high")) {
+                                eventType = xmlPullParser.next();
+                                weekWeather.setHigh(xmlPullParser.getText().substring(2).trim());
+                            } else if (xmlPullParser.getName().equals("low")) {
+                                eventType = xmlPullParser.next();
+                                weekWeather.setLow(xmlPullParser.getText().substring(2).trim());
+                            } else if (xmlPullParser.getName().equals("type")) {
+                                eventType = xmlPullParser.next();
+                                weekWeather.setType(xmlPullParser.getText());
+                            }
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        break;
+                }
+                eventType=xmlPullParser.next();
+            }
+        }catch (XmlPullParserException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return weekWeathers;
+    }
+
+    void updateWeekWeather(List<WeekWeather> weekWeather) {
+        for(int i=0;i<weekWeather.size();i++) {
+            dateWeek[i].setText(weekWeather.get(i).getDate());
+            temperatureWeek[i].setText(weekWeather.get(i).getHigh() + "~" + weekWeather.get(i).getLow());
+            climateWeek[i].setText(weekWeather.get(i).getType());
+            windWeek[i].setText(weekWeather.get(i).getFengli());
+
+            if (weekWeather.get(i).getType() == null) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_baoxue);
+            } else if (weekWeather.get(i).getType().equals("暴雪")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_baoxue);
+            } else if (weekWeather.get(i).getType().equals("暴雨")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_baoyu);
+            } else if (weekWeather.get(i).getType().equals("大暴雨")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_dabaoyu);
+            } else if (weekWeather.get(i).getType().equals("大雪")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_daxue);
+            } else if (weekWeather.get(i).getType().equals("大雨")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_dayu);
+            } else if (weekWeather.get(i).getType().equals("多云")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_duoyun);
+            } else if (weekWeather.get(i).getType().equals("雷阵雨")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_leizhenyu);
+            } else if (weekWeather.get(i).getType().equals("雷阵雨冰雹")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_leizhenyubingbao);
+            } else if (weekWeather.get(i).getType().equals("晴")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_qing);
+            } else if (weekWeather.get(i).getType().equals("沙尘暴")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_shachenbao);
+            } else if (weekWeather.get(i).getType().equals("特大暴雨")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_tedabaoyu);
+            } else if (weekWeather.get(i).getType().equals("雾")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_wu);
+            } else if (weekWeather.get(i).getType().equals("小雪")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_xiaoxue);
+            } else if (weekWeather.get(i).getType().equals("小雨")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_xiaoyu);
+            } else if (weekWeather.get(i).getType().equals("阴")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_yin);
+            } else if (weekWeather.get(i).getType().equals("雨夹雪")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_yujiaxue);
+            } else if (weekWeather.get(i).getType().equals("阵雪")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_zhenxue);
+            } else if (weekWeather.get(i).getType().equals("阵雨")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_zhenyu);
+            } else if (weekWeather.get(i).getType().equals("中雪")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_zhongxue);
+            } else if (weekWeather.get(i).getType().equals("中雨")) {
+                weatherImgWeek[i].setImageResource(R.drawable.biz_plugin_weather_zhongyu);
+            }
+        }
     }
 
 }
