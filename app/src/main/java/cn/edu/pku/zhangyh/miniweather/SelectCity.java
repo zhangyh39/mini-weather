@@ -2,6 +2,7 @@ package cn.edu.pku.zhangyh.miniweather;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -141,6 +142,14 @@ public class SelectCity extends Activity implements View.OnClickListener {
     public void onClick(View v){
         switch(v.getId()){
             case R.id.title_back:
+                if(selectId!=null){
+                    SharedPreferences.Editor editor=getSharedPreferences("config",MODE_PRIVATE).edit();
+                    editor.putString("main_city-code",selectId);
+                    editor.commit();
+                }else{
+                    SharedPreferences sharedPreferences = getSharedPreferences("config",MODE_PRIVATE);
+                    selectId = sharedPreferences.getString("main_city-code","101010100");
+                }
                 Intent i=new Intent();
                 i.putExtra("cityCode",selectId);
                 setResult(RESULT_OK,i);

@@ -18,8 +18,8 @@
             android:text="星期五"/>
         <ImageView
             android:id="@+id/image4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="90dip"
+            android:layout_height="90dip"
             android:src="@drawable/biz_plugin_weather_qing"/>
         <TextView
             android:id="@+id/temperature4"
@@ -55,8 +55,8 @@
             android:text="星期五"/>
         <ImageView
             android:id="@+id/image5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="90dip"
+            android:layout_height="90dip"
             android:src="@drawable/biz_plugin_weather_qing"/>
         <TextView
             android:id="@+id/temperature5"
@@ -92,8 +92,8 @@
             android:text="星期五"/>
         <ImageView
             android:id="@+id/image6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="90dip"
+            android:layout_height="90dip"
             android:src="@drawable/biz_plugin_weather_qing"/>
         <TextView
             android:id="@+id/temperature6"

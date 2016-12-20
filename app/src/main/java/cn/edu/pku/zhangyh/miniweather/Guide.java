@@ -2,6 +2,7 @@ package cn.edu.pku.zhangyh.miniweather;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.view.ViewPager;
@@ -30,17 +31,28 @@ public class Guide extends Activity implements ViewPager.OnPageChangeListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.guide);
-        initViews();
-        initdots();
-        btn = (Button) views.get(2).findViewById(R.id.btn);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Guide.this,MainActivity.class);
-                startActivity(i);
-                finish();
-            }
-        });
+        SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+        boolean isFirst = sharedPreferences.getBoolean("isFirst", true);
+        if(isFirst){
+            initViews();
+            initdots();
+            btn = (Button) views.get(2).findViewById(R.id.btn);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SharedPreferences.Editor editor=getSharedPreferences("config",MODE_PRIVATE).edit();
+                    editor.putBoolean("isFirst",false);
+                    editor.commit();
+                    Intent i = new Intent(Guide.this,MainActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+            });
+        }else{
+            Intent i = new Intent(Guide.this,MainActivity.class);
+            startActivity(i);
+            finish();
+        }
     }
 
     private void initdots(){
