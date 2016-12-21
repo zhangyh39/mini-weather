@@ -1,7 +1,6 @@
 package cn.edu.pku.zhangyh.miniweather;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,14 +10,17 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -33,6 +35,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.pku.zhangyh.app.MyApplication;
+import cn.edu.pku.zhangyh.bean.City;
 import cn.edu.pku.zhangyh.bean.TodayWeather;
 import cn.edu.pku.zhangyh.bean.WeekWeather;
 import cn.edu.pku.zhangyh.util.NetUtil;
@@ -58,8 +62,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
 
     private static final int UPDATE_TODAY_WEATHER=1;
     private static final int UPDATE_WEEK_WEATHER=2;
-    private ImageView mUpdateBtn;
-    private ImageView mCitySelect;
+    private ImageView mUpdateBtn, mCitySelect,mLocation;
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv, pmQualityTv, temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
     private Handler mHandler = new Handler(){
@@ -76,6 +79,13 @@ public class MainActivity extends Activity implements View.OnClickListener, View
             }
         }
     };
+    public LocationClient mLocationClient = null;
+    // 定位监听器类
+    public BDLocationListener myListener = new MyLocationListener();
+    private MyApplication cityApplication;
+    private List<City> mcity;
+    private ArrayList<String> cityName = new ArrayList<String>();
+    private ArrayList<String> cityId= new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +100,11 @@ public class MainActivity extends Activity implements View.OnClickListener, View
             Log.d("myWeather", "网络挂了");
             Toast.makeText(MainActivity.this, "网络挂了", Toast.LENGTH_LONG).show();
         }
-        mCitySelect=(ImageView) findViewById(R.id.title_city_manager);
+        mCitySelect = (ImageView) findViewById(R.id.title_city_manager);
         mCitySelect.setOnClickListener(this);
+        mLocation = (ImageView) findViewById(R.id.title_location);
+        mLocation.setOnClickListener(this);
         initView();
-
-
         //六日天气
         initViews();
         initdots();
@@ -142,6 +152,18 @@ public class MainActivity extends Activity implements View.OnClickListener, View
             startActivityForResult(i,1);
         }
         if (view.getId() == R.id.title_update_btn) {
+            SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+            String cityCode = sharedPreferences.getString("main_city-code", "101010100");
+            Log.d("myWeather", cityCode);
+
+            if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
+                Log.d("myWeather", "网络OK");
+                queryWeatherCode(cityCode);
+            } else {
+                Log.d("myWeather", "网络挂了！");
+                Toast.makeText(MainActivity.this, "网络挂了！", Toast.LENGTH_LONG).show();
+            }
+
             mUpdateBtn.setVisibility(View.GONE);
             ProgressBar mUpateProgress =(ProgressBar) findViewById(R.id.title_update_progress);
             mUpateProgress.setVisibility(View.VISIBLE);
@@ -157,17 +179,21 @@ public class MainActivity extends Activity implements View.OnClickListener, View
             params.addRule(RelativeLayout.LEFT_OF,mUpateProgress.getId());
             mShare.setLayoutParams(params);
 
-            SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
-            String cityCode = sharedPreferences.getString("main_city-code", "101010100");
-            Log.d("myWeather", cityCode);
-
-            if (NetUtil.getNetworkState(this) != NetUtil.NETWORN_NONE) {
-                Log.d("myWeather", "网络OK");
-                queryWeatherCode(cityCode);
-            } else {
-                Log.d("myWeather", "网络OK");
-                Toast.makeText(MainActivity.this, "网络挂了！", Toast.LENGTH_LONG).show();
-            }
+        }
+        if(view.getId() == R.id.title_location){
+            Log.d("myWeather","location");
+            mLocationClient = new LocationClient(getApplicationContext());
+            // 设置定位参数
+            LocationClientOption option = new LocationClientOption();
+            option.setOpenGps(true); // 打开GPRS
+            option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
+            // 设置获取地址信息
+            option.setIsNeedAddress(true);
+            mLocationClient.setLocOption(option);
+            // 注册监听函数
+            mLocationClient.registerLocationListener(myListener);
+            // 调用此方法开始定位
+            mLocationClient.start();
         }
     }
 
@@ -181,7 +207,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
                 queryWeatherCode(newCityCode);
             }else{
                 Log.d("myWeather","网络挂了");
-                Toast.makeText(MainActivity.this, "网络挂了", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "网络故障，请检查网络是否通畅", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -565,4 +591,46 @@ public class MainActivity extends Activity implements View.OnClickListener, View
         return id;
     }
 
+    public class MyLocationListener implements BDLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            if (location == null) {
+                return;
+            }
+            Log.d("myWeather",location.getLocType()+"");
+            if (location.getLocType() == BDLocation.TypeNetWorkLocation){// 网络定位结果
+                Toast.makeText(MainActivity.this, "定位成功：您位于"+location.getCity(), Toast.LENGTH_SHORT).show();
+            }else  if (location.getLocType() == BDLocation.TypeOffLineLocationFail || location.getLocType() == BDLocation.TypeOffLineLocation ) {// 离线定位结果
+                Toast.makeText(MainActivity.this, "定位失败，请检查网络是否开启", Toast.LENGTH_SHORT).show();
+            }
+            cityApplication = (MyApplication) getApplication();
+            mcity = cityApplication.getCityList();
+            for (int i = 0; i < mcity.size(); i++) {
+                cityName.add(mcity.get(i).getCity());
+                cityId.add(mcity.get(i).getNumber());
+            }
+            String name = location.getCity().substring(0,location.getCity().length()-1);
+            int index = cityName.indexOf(name);
+            String citycode = cityId.get(index);
+            Log.d("myWeather",citycode);
+            if (NetUtil.getNetworkState(MainActivity.this) != NetUtil.NETWORN_NONE) {
+                queryWeatherCode(citycode);
+            }
+            SharedPreferences.Editor editor = getSharedPreferences("config", MODE_PRIVATE).edit();
+            editor.putString("main_city-code",citycode);
+            editor.commit();
+
+/*            if (location.getLocType() == BDLocation.TypeNetWorkLocation){// 网络定位结果
+                Toast.makeText(MainActivity.this, "定位成功：您位于"+location.getCity(), Toast.LENGTH_SHORT).show();
+            } else if (location.getLocType() == BDLocation.TypeOffLineLocation) {// 离线定位结果
+                Toast.makeText(MainActivity.this, "离线定位成功：您位于"+location.getCity(), Toast.LENGTH_SHORT).show();
+            } else if (location.getLocType() == BDLocation.TypeServerError) {
+                Toast.makeText(MainActivity.this, "服务端网络定位失败！", Toast.LENGTH_SHORT).show();
+            } else if (location.getLocType() == BDLocation.TypeNetWorkException) {
+                Toast.makeText(MainActivity.this, "定位失败，请检查网络是否通畅！", Toast.LENGTH_SHORT).show();
+            } else if (location.getLocType() == BDLocation.TypeCriteriaException) {
+                Toast.makeText(MainActivity.this, "无法获取有效定位依据导致定位失败，请检查手机是否处于飞行模式！", Toast.LENGTH_SHORT).show();
+            } */
+        }
+    }
 }
