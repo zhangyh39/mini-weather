@@ -62,7 +62,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
 
     private static final int UPDATE_TODAY_WEATHER=1;
     private static final int UPDATE_WEEK_WEATHER=2;
-    private ImageView mUpdateBtn, mCitySelect,mLocation;
+    private ImageView mUpdateBtn, mCitySelect,mLocation, mShare;
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv, pmQualityTv, temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
     private Handler mHandler = new Handler(){
@@ -104,6 +104,8 @@ public class MainActivity extends Activity implements View.OnClickListener, View
         mCitySelect.setOnClickListener(this);
         mLocation = (ImageView) findViewById(R.id.title_location);
         mLocation.setOnClickListener(this);
+        mShare = (ImageView) findViewById(R.id.title_share);
+        mShare.setOnClickListener(this);
         initView();
         //六日天气
         initViews();
@@ -194,6 +196,14 @@ public class MainActivity extends Activity implements View.OnClickListener, View
             mLocationClient.registerLocationListener(myListener);
             // 调用此方法开始定位
             mLocationClient.start();
+        }
+        if(view.getId() == R.id.title_share){
+            Intent intent=new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
+            intent.putExtra(Intent.EXTRA_TEXT, "嗨，我正在使用MinWeather，快一起加入吧！");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(Intent.createChooser(intent, "分享"));
         }
     }
 
