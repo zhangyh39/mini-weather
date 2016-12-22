@@ -609,7 +609,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
             }
             Log.d("myWeather",location.getLocType()+"");
             if (location.getLocType() == BDLocation.TypeNetWorkLocation){// 网络定位结果
-                Toast.makeText(MainActivity.this, "定位成功：您位于"+location.getCity(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "定位成功：您位于"+location.getCity()+location.getDistrict(), Toast.LENGTH_SHORT).show();
             }else  if (location.getLocType() == BDLocation.TypeOffLineLocationFail || location.getLocType() == BDLocation.TypeOffLineLocation ) {// 离线定位结果
                 Toast.makeText(MainActivity.this, "定位失败，请检查网络是否开启", Toast.LENGTH_SHORT).show();
             }
@@ -619,8 +619,12 @@ public class MainActivity extends Activity implements View.OnClickListener, View
                 cityName.add(mcity.get(i).getCity());
                 cityId.add(mcity.get(i).getNumber());
             }
+            String district = location.getDistrict().substring(0,location.getCity().length()-1);
             String name = location.getCity().substring(0,location.getCity().length()-1);
-            int index = cityName.indexOf(name);
+            int index = cityName.indexOf(district);
+            if(index == -1){
+                index = cityName.indexOf(name);
+            }
             String citycode = cityId.get(index);
             Log.d("myWeather",citycode);
             if (NetUtil.getNetworkState(MainActivity.this) != NetUtil.NETWORN_NONE) {
